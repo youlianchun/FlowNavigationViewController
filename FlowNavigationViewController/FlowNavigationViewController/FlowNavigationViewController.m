@@ -47,7 +47,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.delegate = self;
-    self.navigationBar.tintColor = [UIColor whiteColor];
     self.initFlag = YES;
     [self performSelector:@selector(showWebVC) withObject:nil afterDelay:0];
     // Do any additional setup after loading the view.
