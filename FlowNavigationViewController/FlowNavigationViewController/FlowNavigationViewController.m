@@ -1,17 +1,17 @@
 //
 //  FlowNavigationViewController.m
-//  FlowNavigationViewController
+//  UPBOX
 //
 //  Created by YLCHUN on 2017/4/24.
 //  Copyright © 2017年 PPSPORTS Cultural Development Co., Ltd. All rights reserved.
 //
-
-#import "FlowNavigationViewController.h"
 #import "UIViewController+FullScreen.h"
+#import "FlowNavigationViewController.h"
 
 @interface FlowNavigationViewController ()<UINavigationControllerDelegate>
 @property (nonatomic, assign) BOOL initFlag;
 @property (nonatomic, retain) UIViewController *viewController;
+@property (nonatomic, copy) void(^flowEndEventAtRoot)();
 @property (nonatomic, assign) BOOL animated;
 -(instancetype)initWithRootViewController_self:(UIViewController *)rootViewController;
 @end
@@ -31,26 +31,38 @@
     if (self) {
         self.hidesBottomBarWhenPushed = YES;
         self.modalPresentationStyle = UIModalPresentationCustom;
+        self.closeFlag = YES;
     }
     return self;
+}
+
+-(void)setViewController:(UIViewController *)viewController {
+    _viewController = viewController;
+    self.flowEndEventAtRoot = nil;
+    if ([viewController conformsToProtocol:@protocol(FlowNavigationProtocol)] || [viewController respondsToSelector:@selector(flowEndEventAtRoot)]) {
+        self.flowEndEventAtRoot = [(UIViewController<FlowNavigationProtocol>*)viewController flowEndEventAtRoot];
+    }
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.delegate = self;
+    self.navigationBar.tintColor = [UIColor whiteColor];
     self.initFlag = YES;
-    [self performSelector:@selector(showWebVC) withObject:nil afterDelay:0.001];
+    [self performSelector:@selector(showWebVC) withObject:nil afterDelay:0];
     // Do any additional setup after loading the view.
 }
 
 -(void)showWebVC{
     [self pushViewController:self.viewController animated:self.animated];
+    _viewController = nil;
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
 -(void)popToStartViewControllerWithAnimated:(BOOL)flag {
     if(self.viewControllers.count>1) {
         UIViewController *viewController = self.viewControllers[1];
@@ -65,12 +77,26 @@
 #pragma mark - Navigation
 
 - (void)navigationController:(UINavigationController *)navigationController didShowViewController:(UIViewController *)viewController animated:(BOOL)animated {
-    if (navigationController.viewControllers.count == 1 && !self.initFlag ) {
-        [self dismissViewControllerAnimated:NO completion:nil];
+    if (navigationController.viewControllers.count == 1 && !self.initFlag && self.closeFlag) {
+        [super dismissViewControllerAnimated:NO completion:^{
+            if (self.flowEndEventAtRoot) {
+                self.flowEndEventAtRoot();
+            }
+            if ([self respondsToSelector:@selector(flowEndEvent)]) {
+                [(FlowNavigationViewController<FlowNavigationProtocol>*)self flowEndEvent];
+            }
+        }];
     }
     self.initFlag = NO;
 }
 
+-(void)unCloseWithJump:(void(^)())code {
+    if (code) {
+        self.closeFlag = NO;
+        code();
+        self.closeFlag = YES;
+    }
+}
 @end
 
 @implementation UIViewController(Flow)
@@ -101,5 +127,6 @@
         return;
     }
 }
+
 
 @end

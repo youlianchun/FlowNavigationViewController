@@ -1,6 +1,6 @@
 //
 //  FlowNavigationViewController.h
-//  FlowNavigationViewController
+//  UPBOX
 //
 //  Created by YLCHUN on 2017/4/24.
 //  Copyright © 2017年 PPSPORTS Cultural Development Co., Ltd. All rights reserved.
@@ -10,7 +10,20 @@
 
 #import <UIKit/UIKit.h>
 
+
+@protocol FlowNavigationProtocol <NSObject>
+
+@optional
+//流程结束后执行代码，返回block内不可有self关键字，涉及参数适用临时变量中转，让self对象能够及时释放
+-(void (^)())flowEndEventAtRoot;
+//用于FlowNavigation
+-(void)flowEndEvent;
+
+@end
+
 @interface FlowNavigationViewController : UINavigationController
+
+@property(nonatomic,assign)BOOL closeFlag;//默认YES
 
 -(instancetype)init NS_UNAVAILABLE ;
 -(instancetype)initWithRootViewController:(UIViewController *)rootViewController NS_UNAVAILABLE;
@@ -18,10 +31,11 @@
 -(instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil NS_UNAVAILABLE;
 -(instancetype)initWithNavigationBarClass:(Class)navigationBarClass toolbarClass:(Class)toolbarClass NS_UNAVAILABLE;
 
+-(void)unCloseWithJump:(void(^)())code;
 /**
  创建流程导航控制器
  仅此方法有效
-
+ 
  @param viewController 流程第0个页面
  @return 导航控制器
  */
@@ -30,7 +44,7 @@
 
 /**
  跳转到流程第0个页面
-
+ 
  @param flag 动画
  */
 -(void)popToStartViewControllerWithAnimated:(BOOL)flag;
@@ -38,7 +52,7 @@
 
 /**
  关闭流程导航控制器
-
+ 
  @param flag 动画
  */
 -(void)closeFlowWithAnimated:(BOOL)flag;
@@ -49,7 +63,7 @@
 
 /**
  模态跳转ViewController 到流程导航控制器
-
+ 
  @param viewControllerToPresent 流程第0个页面
  @param flag 动画
  */
@@ -58,7 +72,7 @@
 
 /**
  关闭流程导航控制器
-
+ 
  @param flag 动画
  */
 -(void)dismisFlowViewControllerWithAnimated:(BOOL)flag;
