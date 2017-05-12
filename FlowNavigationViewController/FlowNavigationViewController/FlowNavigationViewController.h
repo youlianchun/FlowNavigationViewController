@@ -14,8 +14,6 @@
 @protocol FlowNavigationProtocol <NSObject>
 
 @optional
-//流程结束后执行代码，返回block内不可有self关键字，涉及参数适用临时变量中转，让self对象能够及时释放
--(void (^)())flowEndEventAtRoot;
 //用于FlowNavigation
 -(void)flowEndEvent;
 
@@ -81,6 +79,5 @@
  
  @param flag 动画
  */
--(void)dismisFlowViewControllerWithAnimated:(BOOL)flag;
 -(void)dismisFlowViewControllerWithAnimated:(BOOL)flag completion: (void (^)(void))completion;
 @end

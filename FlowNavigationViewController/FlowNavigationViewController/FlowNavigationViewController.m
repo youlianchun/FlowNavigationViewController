@@ -26,7 +26,6 @@
 @property (nonatomic, assign) BOOL closeFlag;
 @property (nonatomic, retain) UIView *shadeView;
 @property (nonatomic, retain) UIViewController *viewController;
-@property (nonatomic, copy) void(^flowEndEventAtRoot)();
 @property (nonatomic, copy) void(^dismisCompletion)();
 
 @property (nonatomic, assign) BOOL animated;
@@ -49,14 +48,6 @@
         self.modalPresentationStyle = UIModalPresentationCustom;
     }
     return self;
-}
-
--(void)setViewController:(UIViewController *)viewController {
-    _viewController = viewController;
-    self.flowEndEventAtRoot = nil;
-    if ([viewController conformsToProtocol:@protocol(FlowNavigationProtocol)] || [viewController respondsToSelector:@selector(flowEndEventAtRoot)]) {
-        self.flowEndEventAtRoot = [(UIViewController<FlowNavigationProtocol>*)viewController flowEndEventAtRoot];
-    }
 }
 
 -(UIView *)shadeView {
@@ -119,9 +110,6 @@
 
 -(void)dismissViewControllerAnimated:(BOOL)flag completion:(void (^)(void))completion {
     [super dismissViewControllerAnimated:NO completion:^{
-        if (self.flowEndEventAtRoot) {
-            self.flowEndEventAtRoot();
-        }
         if ([self respondsToSelector:@selector(flowEndEvent)]) {
             [(FlowNavigationViewController<FlowNavigationProtocol>*)self flowEndEvent];
         }
@@ -164,10 +152,6 @@
     fnvc.animated = flag;
     [self presentViewController:fnvc animated:NO completion:nil];
     return fnvc;
-}
-
--(void)dismisFlowViewControllerWithAnimated:(BOOL)flag {
-    [self dismisFlowViewControllerWithAnimated:flag completion:nil];
 }
 
 -(void)dismisFlowViewControllerWithAnimated:(BOOL)flag completion: (void (^)(void))completion {
