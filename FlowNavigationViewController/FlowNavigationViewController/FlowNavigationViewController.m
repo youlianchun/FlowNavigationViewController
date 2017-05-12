@@ -9,15 +9,8 @@
 #import "FlowNavigationViewController.h"
 
 @interface UIBorderViewController : UIViewController
-@property (nonatomic, retain) UIImageView *imageView;
 @end
 @implementation UIBorderViewController
--(void)viewDidLoad {
-    [super viewDidLoad];
-    self.imageView = [[UIImageView alloc] initWithFrame:self.view.bounds];
-    self.imageView.backgroundColor = [UIColor clearColor];
-    [self.view addSubview:self.imageView];
-}
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     [self.navigationController setNavigationBarHidden:YES animated:animated];
@@ -30,6 +23,8 @@
 
 @interface FlowNavigationViewController ()<UINavigationControllerDelegate>
 @property (nonatomic, assign) BOOL initFlag;
+@property (nonatomic, assign) BOOL closeFlag;
+@property (nonatomic, retain) UIView *shadeView;
 @property (nonatomic, retain) UIViewController *viewController;
 @property (nonatomic, copy) void(^flowEndEventAtRoot)();
 @property (nonatomic, copy) void(^dismisCompletion)();
@@ -64,11 +59,17 @@
     }
 }
 
+-(UIView *)shadeView {
+    if (!_shadeView) {
+        _shadeView = [[UIView alloc] initWithFrame:self.view.bounds];
+        _shadeView.backgroundColor = [UIColor blackColor];
+    }
+    return _shadeView;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.delegate = self;
-    UIView *transitionView = self.view.subviews[0];
-    transitionView.backgroundColor = [UIColor clearColor];
     self.initFlag = YES;
     [self performSelector:@selector(showViewController) withObject:nil afterDelay:0];
     // Do any additional setup after loading the view.
@@ -79,10 +80,6 @@
     _viewController = nil;
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
 
 -(void)popToStartViewControllerWithAnimated:(BOOL)flag {
     if(self.viewControllers.count>1) {
@@ -102,25 +99,34 @@
 }
 
 -(void)closeFlowWithAnimated:(BOOL)flag {
-    UIBorderViewController *borderVC = [[UIBorderViewController alloc] init];
-    UIView *view =  self.presentingViewController.view;
-    CGSize s = view.bounds.size;
-    UIGraphicsBeginImageContextWithOptions(s, NO, [UIScreen mainScreen].scale);
-    [view.layer renderInContext:UIGraphicsGetCurrentContext()];
-    UIImage*image = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    borderVC.imageView.image = image;
-    [self pushViewController:borderVC animated:flag];
-//    [super popToRootViewControllerAnimated:flag];
+    if (!self.closeFlag) {
+        self.closeFlag = YES;
+        self.shadeView.alpha = 0.2;
+        [self.view.superview insertSubview:self.shadeView belowSubview:self.view];
+        [UIView animateWithDuration:0.3 animations:^{
+            self.shadeView.alpha = 0;
+            self.view.transform = CGAffineTransformMakeTranslation(-CGRectGetWidth(self.view.bounds), 0.0);
+        }completion:^(BOOL finished) {
+            [self.shadeView removeFromSuperview];
+            [self dismissViewControllerAnimated:NO completion:^{
+                self.shadeView.alpha = 0.2;
+                self.closeFlag = NO;
+                self.view.transform = CGAffineTransformIdentity;
+            }];
+        }];
+    }
 }
 
 -(void)dismissViewControllerAnimated:(BOOL)flag completion:(void (^)(void))completion {
-    [super dismissViewControllerAnimated:false completion:^{
+    [super dismissViewControllerAnimated:NO completion:^{
         if (self.flowEndEventAtRoot) {
             self.flowEndEventAtRoot();
         }
         if ([self respondsToSelector:@selector(flowEndEvent)]) {
             [(FlowNavigationViewController<FlowNavigationProtocol>*)self flowEndEvent];
+        }
+        if (self.viewControllers.count>1) {
+            self.viewControllers = @[self.viewControllers[0]];
         }
         if (self.dismisCompletion) {
             self.dismisCompletion();
@@ -148,7 +154,7 @@
     FlowNavigationViewController *fnvc;
     if ([viewControllerToPresent isKindOfClass:[FlowNavigationViewController class]]) {
         fnvc = (FlowNavigationViewController*)viewControllerToPresent;
-        if ([fnvc.viewControllers[0] class] != [UIViewController class] || !fnvc.viewController) {
+        if ([fnvc.viewControllers[0] class] != [UIBorderViewController class] || !fnvc.viewController) {
             NSAssert(NO, @"FlowNavigationViewController 格式错误");
             return nil;
         }
