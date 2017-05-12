@@ -7,8 +7,6 @@
 //
 
 #import "FlowNavigationViewController.h"
-#import "UIViewController+FullScreen.h"
-
 
 @interface UIBorderViewController : UIViewController
 @property (nonatomic, retain) UIImageView *imageView;
@@ -17,6 +15,7 @@
 -(void)viewDidLoad {
     [super viewDidLoad];
     self.imageView = [[UIImageView alloc] initWithFrame:self.view.bounds];
+    self.imageView.backgroundColor = [UIColor clearColor];
     [self.view addSubview:self.imageView];
 }
 -(void)viewWillAppear:(BOOL)animated {
@@ -43,7 +42,6 @@
 
 +(instancetype)flowNavigationWithViewController:(UIViewController*)viewController {
     UIBorderViewController *rootVC = [[UIBorderViewController alloc] init];
-//    rootVC.navigationBarHidden = YES;
     FlowNavigationViewController * fnvc = [[FlowNavigationViewController alloc] initWithRootViewController_self:rootVC];
     fnvc.viewController = viewController;
     return fnvc;
@@ -72,11 +70,11 @@
     UIView *transitionView = self.view.subviews[0];
     transitionView.backgroundColor = [UIColor clearColor];
     self.initFlag = YES;
-    [self performSelector:@selector(showWebVC) withObject:nil afterDelay:0];
+    [self performSelector:@selector(showViewController) withObject:nil afterDelay:0];
     // Do any additional setup after loading the view.
 }
 
--(void)showWebVC{
+-(void)showViewController{
     [self pushViewController:self.viewController animated:self.animated];
     _viewController = nil;
 }
