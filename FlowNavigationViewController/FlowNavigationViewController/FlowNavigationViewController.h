@@ -23,15 +23,12 @@
 
 @interface FlowNavigationViewController : UINavigationController
 
-@property(nonatomic,assign)BOOL closeFlag;//默认YES
-
 -(instancetype)init NS_UNAVAILABLE ;
 -(instancetype)initWithRootViewController:(UIViewController *)rootViewController NS_UNAVAILABLE;
 -(instancetype)initWithCoder:(NSCoder *)aDecoder NS_UNAVAILABLE;
 -(instancetype)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil NS_UNAVAILABLE;
 -(instancetype)initWithNavigationBarClass:(Class)navigationBarClass toolbarClass:(Class)toolbarClass NS_UNAVAILABLE;
 
--(void)unCloseWithJump:(void(^)())code;
 /**
  创建流程导航控制器
  仅此方法有效
@@ -49,6 +46,15 @@
  */
 -(void)popToStartViewControllerWithAnimated:(BOOL)flag;
 
+
+/**
+ push之后 pop前边的控制器
+ 
+ @param viewController 目标控制器
+ @param popCount pop数量
+ @param animated push动画
+ */
+-(void)pushViewController:(UIViewController *)viewController beforePop:(NSUInteger)popCount animated:(BOOL)animated;
 
 /**
  关闭流程导航控制器
@@ -76,5 +82,5 @@
  @param flag 动画
  */
 -(void)dismisFlowViewControllerWithAnimated:(BOOL)flag;
-
+-(void)dismisFlowViewControllerWithAnimated:(BOOL)flag completion: (void (^)(void))completion;
 @end
