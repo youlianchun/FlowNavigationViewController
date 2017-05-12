@@ -9,6 +9,26 @@
 #import "FlowNavigationViewController.h"
 #import "UIViewController+FullScreen.h"
 
+
+@interface UIBorderViewController : UIViewController
+@property (nonatomic, retain) UIImageView *imageView;
+@end
+@implementation UIBorderViewController
+-(void)viewDidLoad {
+    [super viewDidLoad];
+    self.imageView = [[UIImageView alloc] initWithFrame:self.view.bounds];
+    [self.view addSubview:self.imageView];
+}
+-(void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [self.navigationController setNavigationBarHidden:YES animated:animated];
+}
+-(void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [self.navigationController setNavigationBarHidden:NO animated:animated];
+}
+@end
+
 @interface FlowNavigationViewController ()<UINavigationControllerDelegate>
 @property (nonatomic, assign) BOOL initFlag;
 @property (nonatomic, retain) UIViewController *viewController;
@@ -22,8 +42,8 @@
 @implementation FlowNavigationViewController
 
 +(instancetype)flowNavigationWithViewController:(UIViewController*)viewController {
-    UIViewController *rootVC = [[UIViewController alloc] init];
-    rootVC.navigationBarHidden = YES;
+    UIBorderViewController *rootVC = [[UIBorderViewController alloc] init];
+//    rootVC.navigationBarHidden = YES;
     FlowNavigationViewController * fnvc = [[FlowNavigationViewController alloc] initWithRootViewController_self:rootVC];
     fnvc.viewController = viewController;
     return fnvc;
@@ -49,7 +69,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.delegate = self;
-    self.navigationBar.tintColor = [UIColor whiteColor];
+    UIView *transitionView = self.view.subviews[0];
+    transitionView.backgroundColor = [UIColor clearColor];
     self.initFlag = YES;
     [self performSelector:@selector(showWebVC) withObject:nil afterDelay:0];
     // Do any additional setup after loading the view.
@@ -83,28 +104,56 @@
 }
 
 -(void)closeFlowWithAnimated:(BOOL)flag {
-    [super popToRootViewControllerAnimated:flag];
+    UIBorderViewController *borderVC = [[UIBorderViewController alloc] init];
+    UIView *view =  self.presentingViewController.view;
+    CGSize s = view.bounds.size;
+    UIGraphicsBeginImageContextWithOptions(s, NO, [UIScreen mainScreen].scale);
+    [view.layer renderInContext:UIGraphicsGetCurrentContext()];
+    UIImage*image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    borderVC.imageView.image = image;
+    [self pushViewController:borderVC animated:flag];
+//    [super popToRootViewControllerAnimated:flag];
+}
+
+-(void)dismissViewControllerAnimated:(BOOL)flag completion:(void (^)(void))completion {
+    [super dismissViewControllerAnimated:false completion:^{
+        if (self.flowEndEventAtRoot) {
+            self.flowEndEventAtRoot();
+        }
+        if ([self respondsToSelector:@selector(flowEndEvent)]) {
+            [(FlowNavigationViewController<FlowNavigationProtocol>*)self flowEndEvent];
+        }
+        if (self.dismisCompletion) {
+            self.dismisCompletion();
+        }
+        if (completion) {
+            completion();
+        }
+    }];
 }
 
 #pragma mark - Navigation
 
 - (void)navigationController:(UINavigationController *)navigationController didShowViewController:(UIViewController *)viewController animated:(BOOL)animated {
-    if (navigationController.viewControllers.count == 1 && !self.initFlag) {
-        [super dismissViewControllerAnimated:NO completion:^{
-            if (self.flowEndEventAtRoot) {
-                self.flowEndEventAtRoot();
-            }
-            if ([self respondsToSelector:@selector(flowEndEvent)]) {
-                [(FlowNavigationViewController<FlowNavigationProtocol>*)self flowEndEvent];
-            }
-            if (self.dismisCompletion) {
-                self.dismisCompletion();
-            }
-        }];
+    if ((navigationController.viewControllers.count == 1  || [self.topViewController isKindOfClass:[UIBorderViewController class]]) && !self.initFlag) {
+        [super dismissViewControllerAnimated:NO completion:nil];
     }
     self.initFlag = NO;
 }
-
+//- (nullable id <UIViewControllerInteractiveTransitioning>)navigationController:(UINavigationController *)navigationController
+//                                   interactionControllerForAnimationController:(id <UIViewControllerAnimatedTransitioning>) animationController{
+//    return nil;
+//    
+//}
+//
+//- (nullable id <UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController
+//                                            animationControllerForOperation:(UINavigationControllerOperation)operation
+//                                                         fromViewController:(UIViewController *)fromVC
+//                                                           toViewController:(UIViewController *)toVC{
+//    
+//    return nil;
+//}
 @end
 
 @implementation UIViewController(Flow)
@@ -139,7 +188,7 @@
     }
     if (fnvc) {
         fnvc.dismisCompletion = completion;
-        [fnvc popToRootViewControllerAnimated:flag];
+        [fnvc closeFlowWithAnimated:flag];
     }
 }
 
