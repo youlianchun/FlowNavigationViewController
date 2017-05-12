@@ -139,19 +139,7 @@
     }
     self.initFlag = NO;
 }
-//- (nullable id <UIViewControllerInteractiveTransitioning>)navigationController:(UINavigationController *)navigationController
-//                                   interactionControllerForAnimationController:(id <UIViewControllerAnimatedTransitioning>) animationController{
-//    return nil;
-//    
-//}
-//
-//- (nullable id <UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController
-//                                            animationControllerForOperation:(UINavigationControllerOperation)operation
-//                                                         fromViewController:(UIViewController *)fromVC
-//                                                           toViewController:(UIViewController *)toVC{
-//    
-//    return nil;
-//}
+
 @end
 
 @implementation UIViewController(Flow)
