@@ -136,7 +136,16 @@
 
 @end
 
+#import <objc/runtime.h>
 @implementation UIViewController(Flow)
+
+-(id)flowObject {
+    return objc_getAssociatedObject(self, @selector(flowObject));
+}
+
+-(void)setFlowObject:(id)flowObject {
+    objc_setAssociatedObject(self, @selector(flowObject), flowObject, OBJC_ASSOCIATION_RETAIN);
+}
 
 -(FlowNavigationViewController*)presentFlowViewController:(UIViewController *)viewControllerToPresent animated:(BOOL)flag {
     FlowNavigationViewController *fnvc;
