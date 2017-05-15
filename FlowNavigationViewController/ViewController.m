@@ -35,7 +35,7 @@
     ViewController *vc = [[ViewController alloc] init];
     if (self.navigationController) {
         if (self.navigationController.viewControllers.count == 4) {
-            [self dismisFlowViewControllerWithAnimated:YES];
+            [self dismisFlowViewControllerWithAnimated:YES completion:nil];
         }else{
             [self.navigationController pushViewController:vc animated:YES];
         }

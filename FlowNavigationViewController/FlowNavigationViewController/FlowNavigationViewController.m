@@ -94,10 +94,10 @@
         self.closeFlag = YES;
         self.shadeView.alpha = 0.2;
         [self.view.superview insertSubview:self.shadeView belowSubview:self.view];
-        [UIView animateWithDuration:0.3 animations:^{
+        [UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionCurveEaseInOut animations:^{
             self.shadeView.alpha = 0;
             self.view.transform = CGAffineTransformMakeTranslation(-CGRectGetWidth(self.view.bounds), 0.0);
-        }completion:^(BOOL finished) {
+        } completion:^(BOOL finished) {
             [self.shadeView removeFromSuperview];
             [self dismissViewControllerAnimated:NO completion:^{
                 self.shadeView.alpha = 0.2;
