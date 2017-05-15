@@ -14,7 +14,6 @@
 		A972BD9C1EB09A7100D30081 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A972BD9B1EB09A7100D30081 /* Assets.xcassets */; };
 		A972BD9F1EB09A7100D30081 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A972BD9D1EB09A7100D30081 /* LaunchScreen.storyboard */; };
 		A972BDA91EB09AA500D30081 /* FlowNavigationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = A972BDA81EB09AA500D30081 /* FlowNavigationViewController.m */; };
-		A972BDAD1EB09BC900D30081 /* UIViewController+FullScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = A972BDAC1EB09BC900D30081 /* UIViewController+FullScreen.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,8 +29,6 @@
 		A972BDA01EB09A7100D30081 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A972BDA71EB09AA500D30081 /* FlowNavigationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlowNavigationViewController.h; sourceTree = "<group>"; };
 		A972BDA81EB09AA500D30081 /* FlowNavigationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlowNavigationViewController.m; sourceTree = "<group>"; };
-		A972BDAB1EB09BC900D30081 /* UIViewController+FullScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+FullScreen.h"; sourceTree = "<group>"; };
-		A972BDAC1EB09BC900D30081 /* UIViewController+FullScreen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+FullScreen.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,7 +61,6 @@
 		A972BD8E1EB09A7100D30081 /* FlowNavigationViewController */ = {
 			isa = PBXGroup;
 			children = (
-				A972BDAA1EB09BC900D30081 /* ViewControllerFullScreen */,
 				A972BDA61EB09AA500D30081 /* FlowNavigationViewController */,
 				A972BD921EB09A7100D30081 /* AppDelegate.h */,
 				A972BD931EB09A7100D30081 /* AppDelegate.m */,
@@ -94,15 +90,6 @@
 				A972BDA81EB09AA500D30081 /* FlowNavigationViewController.m */,
 			);
 			path = FlowNavigationViewController;
-			sourceTree = "<group>";
-		};
-		A972BDAA1EB09BC900D30081 /* ViewControllerFullScreen */ = {
-			isa = PBXGroup;
-			children = (
-				A972BDAB1EB09BC900D30081 /* UIViewController+FullScreen.h */,
-				A972BDAC1EB09BC900D30081 /* UIViewController+FullScreen.m */,
-			);
-			path = ViewControllerFullScreen;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -180,7 +167,6 @@
 				A972BDA91EB09AA500D30081 /* FlowNavigationViewController.m in Sources */,
 				A972BD971EB09A7100D30081 /* ViewController.m in Sources */,
 				A972BD941EB09A7100D30081 /* AppDelegate.m in Sources */,
-				A972BDAD1EB09BC900D30081 /* UIViewController+FullScreen.m in Sources */,
 				A972BD911EB09A7100D30081 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
