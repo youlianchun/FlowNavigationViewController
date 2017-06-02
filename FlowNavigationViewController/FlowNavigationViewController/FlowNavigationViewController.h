@@ -65,7 +65,7 @@
 
 @interface UIViewController(Flow)
 
-@property (nonatomic, retain) id flowObject;
+@property (nonatomic, strong) id flowObject;
 /**
  模态跳转ViewController 到流程导航控制器
  

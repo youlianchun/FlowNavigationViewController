@@ -24,8 +24,8 @@
 @interface FlowNavigationViewController ()<UINavigationControllerDelegate>
 @property (nonatomic, assign) BOOL initFlag;
 @property (nonatomic, assign) BOOL closeFlag;
-@property (nonatomic, retain) UIView *shadeView;
-@property (nonatomic, retain) UIViewController *viewController;
+@property (nonatomic, strong) UIView *shadeView;
+@property (nonatomic, strong) UIViewController *viewController;
 @property (nonatomic, copy) void(^dismisCompletion)();
 
 @property (nonatomic, assign) BOOL animated;
